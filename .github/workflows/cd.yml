@@ -23,7 +23,7 @@ jobs:
       shell: bash
       run: |
         # Copy all project files to the EC2 instance
-        scp -o StrictHostKeyChecking=no -i ~/cicdkey.pem -r ./myapp/* ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/CICD_Project/
+        scp -o StrictHostKeyChecking=no -i ~/cicdkey.pem -r ./bookstore_project/* ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/CICD_Project/
         
         # SSH into the EC2 instance and deploy
         ssh -o StrictHostKeyChecking=no -i ~/cicdkey.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "
