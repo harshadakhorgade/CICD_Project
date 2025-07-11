@@ -28,5 +28,6 @@ jobs:
         # SSH into the EC2 instance and deploy
         ssh -o StrictHostKeyChecking=no -i ~/cicdkey.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "
           cd /home/${{ secrets.EC2_USER }}/CICD_Project &&
-          docker-compose up --build -d
+          docker compose up --build -d
+
         "
