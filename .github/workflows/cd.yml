@@ -24,8 +24,8 @@ jobs:
     - name: Package and Copy Code to EC2
       shell: bash
       run: |
-        # Create tarball excluding .git and .github, ignore file changed warning
-        tar --warning=no-file-changed -czf project.tar.gz --exclude='.git' --exclude='.github' .
+        # Create tarball excluding .git and .github, ignore read failures
+        tar --ignore-failed-read -czf project.tar.gz --exclude='.git' --exclude='.github' .
 
         # Copy tarball to EC2
         scp -o StrictHostKeyChecking=no -i ~/cicdkey.pem project.tar.gz ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/
