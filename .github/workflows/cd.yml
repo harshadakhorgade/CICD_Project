@@ -1,5 +1,3 @@
-
-
 name: CD Pipeline
 
 on:
@@ -21,27 +19,61 @@ jobs:
         echo "${{ secrets.EC2_KEY }}" > ~/cicdkey.pem
         chmod 400 ~/cicdkey.pem
 
-    - name: Package and Copy Code to EC2
-      shell: bash
-      run: |
-        # Create tarball excluding .git and .github, ignore read failures
-        tar --ignore-failed-read -czf project.tar.gz --exclude='.git' --exclude='.github' .
-
-        # Copy tarball to EC2
-        scp -o StrictHostKeyChecking=no -i ~/cicdkey.pem project.tar.gz ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/
-
     - name: Deploy on EC2
       shell: bash
       run: |
         ssh -o StrictHostKeyChecking=no -i ~/cicdkey.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "
-          # Extract tarball into project directory
-          tar xzf ~/project.tar.gz -C /home/${{ secrets.EC2_USER }}/CICD_Project --strip-components=1
-          # Move into project and rebuild
+          docker login -u '${{ secrets.DOCKER_HUB_USERNAME }}' -p '${{ secrets.DOCKER_HUB_PASSWORD }}'
+          docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/myapp:latest
           cd /home/${{ secrets.EC2_USER }}/CICD_Project
-          docker compose up --build -d
+          docker compose up --force-recreate -d
         "
 
+# tarball-------
+# name: CD Pipeline
 
+# on:
+#   push:
+#     branches:
+#       - main
+
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#     - name: Checkout Code
+#       uses: actions/checkout@v3
+
+#     - name: Set Up SSH Key
+#       shell: bash
+#       run: |
+#         echo "${{ secrets.EC2_KEY }}" > ~/cicdkey.pem
+#         chmod 400 ~/cicdkey.pem
+
+#     - name: Package and Copy Code to EC2
+#       shell: bash
+#       run: |
+#         # Create tarball excluding .git and .github, ignore read failures
+#         tar --ignore-failed-read -czf project.tar.gz --exclude='.git' --exclude='.github' .
+
+#         # Copy tarball to EC2
+#         scp -o StrictHostKeyChecking=no -i ~/cicdkey.pem project.tar.gz ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/
+
+#     - name: Deploy on EC2
+#       shell: bash
+#       run: |
+#         ssh -o StrictHostKeyChecking=no -i ~/cicdkey.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "
+#           # Extract tarball into project directory
+#           tar xzf ~/project.tar.gz -C /home/${{ secrets.EC2_USER }}/CICD_Project --strip-components=1
+#           # Move into project and rebuild
+#           cd /home/${{ secrets.EC2_USER }}/CICD_Project
+#           docker compose up --build -d
+#         "
+
+
+
+#simple CD --------
 
 # name: CD Pipeline
 
