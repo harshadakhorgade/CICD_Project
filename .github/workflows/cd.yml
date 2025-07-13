@@ -24,10 +24,11 @@ jobs:
       run: |
         ssh -o StrictHostKeyChecking=no -i ~/cicdkey.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "
           docker login -u '${{ secrets.DOCKER_HUB_USERNAME }}' -p '${{ secrets.DOCKER_HUB_PASSWORD }}'
-          docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/myapp:latest
           cd /home/${{ secrets.EC2_USER }}/CICD_Project
+          docker compose pull
           docker compose up --force-recreate -d
         "
+
 
 # tarball is for full files updated on ec2 -------
 # name: CD Pipeline
