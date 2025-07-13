@@ -1,5 +1,4 @@
-Absolutely! Here’s a **professional, clear, and beautifully structured `README.md`** file for your project, explaining the **production-level CI/CD pipeline using GitHub Actions, Docker Hub, and AWS EC2**, step by step.
-
+# 🚀 Production-Ready Django App with CI/CD on AWS EC2 using GitHub Actions & Docker Hub
 ---
 
 ```markdown
