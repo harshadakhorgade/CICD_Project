@@ -12,7 +12,7 @@ services:
     restart: always
     environment:
       - DJANGO_SETTINGS_MODULE=bookstore_project.settings
-    command: gunicorn bookstore_project.wsgi:application --bind 0.0.0.0:8000
+    command: bash -c "python manage.py migrate && gunicorn bookstore_project.wsgi:application --bind 0.0.0.0:8000"
 
 
 # simple -----
