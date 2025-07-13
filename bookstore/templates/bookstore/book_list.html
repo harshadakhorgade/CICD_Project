@@ -1,14 +1,14 @@
 {% extends 'base.html' %}
 
 {% block content %}
-production level cicd Pipline
+production level cicd Pipeline
   <h2>All Books</h2>
-  <ul>
+  {% comment %} <ul>
     {% for book in books %}
       <li>
         <a href="{% url 'book_detail' book.pk %}">{{ book.title }}</a>
         by {{ book.author.name }} - ₹{{ book.price }}
       </li>
     {% endfor %}
-  </ul>
+  </ul> {% endcomment %}
 {% endblock %}
