@@ -1,3 +1,5 @@
+
+
 name: CD Pipeline
 
 on:
@@ -19,15 +21,58 @@ jobs:
         echo "${{ secrets.EC2_KEY }}" > ~/cicdkey.pem
         chmod 400 ~/cicdkey.pem
 
-    - name: Deploy Code
+    - name: Package and Copy Code to EC2
       shell: bash
       run: |
-        # Copy all project files to the EC2 instance
-        scp -o StrictHostKeyChecking=no -i ~/cicdkey.pem -r ./bookstore_project/* ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/CICD_Project/
-        
-        # SSH into the EC2 instance and deploy
-        ssh -o StrictHostKeyChecking=no -i ~/cicdkey.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "
-          cd /home/${{ secrets.EC2_USER }}/CICD_Project &&
-          docker compose up --build -d
+        # Create tarball excluding .git and .github
+        tar czf project.tar.gz . --exclude='.git' --exclude='.github'
 
+        # Copy tarball to EC2
+        scp -o StrictHostKeyChecking=no -i ~/cicdkey.pem project.tar.gz ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/
+
+    - name: Deploy on EC2
+      shell: bash
+      run: |
+        ssh -o StrictHostKeyChecking=no -i ~/cicdkey.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "
+          # Extract tarball into project directory
+          tar xzf ~/project.tar.gz -C /home/${{ secrets.EC2_USER }}/CICD_Project --strip-components=1
+          # Move into project and rebuild
+          cd /home/${{ secrets.EC2_USER }}/CICD_Project
+          docker compose up --build -d
         "
+
+
+
+# name: CD Pipeline
+
+# on:
+#   push:
+#     branches:
+#       - main
+
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#     - name: Checkout Code
+#       uses: actions/checkout@v3
+
+#     - name: Set Up SSH Key
+#       shell: bash
+#       run: |
+#         echo "${{ secrets.EC2_KEY }}" > ~/cicdkey.pem
+#         chmod 400 ~/cicdkey.pem
+
+#     - name: Deploy Code
+#       shell: bash
+#       run: |
+#         # Copy all project files to the EC2 instance
+#         scp -o StrictHostKeyChecking=no -i ~/cicdkey.pem -r ./bookstore_project/* ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/CICD_Project/
+        
+#         # SSH into the EC2 instance and deploy
+#         ssh -o StrictHostKeyChecking=no -i ~/cicdkey.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "
+#           cd /home/${{ secrets.EC2_USER }}/CICD_Project &&
+#           docker compose up --build -d
+
+#         "
