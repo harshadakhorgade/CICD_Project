@@ -44,7 +44,7 @@ jobs:
         push: true
         tags: |
             harshad009/myapp:latest
-            harshad009/myapp:v1.2
+           
 
 
 
