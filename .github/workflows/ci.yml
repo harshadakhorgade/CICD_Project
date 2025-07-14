@@ -42,8 +42,9 @@ jobs:
       with:
         context: .
         push: true
-        tags: harshad009/myapp:latest
-              harshad009/myapp:v1.2
+        tags: |
+            harshad009/myapp:latest
+            harshad009/myapp:v1.2
 
 
 
